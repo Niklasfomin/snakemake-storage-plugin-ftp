@@ -228,10 +228,27 @@ class StorageObject(StorageObjectRead, StorageObjectWrite, StorageObjectGlob):
     def store_object(self):
         # Ensure that the object is stored at the location specified by
         # self.local_path().
-        parent = PosixPath(self.parsed_query.path).parent
-        if str(parent) != ".":
-            self.conn.makedirs(parent, exist_ok=True)
-        self.conn.upload(self.local_path(), self.parsed_query.path)
+        
+        local_path = self.local_path()
+        remote_path = PosixPath(self.parsed_query.path)
+
+        def upload_directory(local_dir: Path, remote_dir: PosixPath):
+            if str(remote_dir) != ".":
+                self.conn.makedirs(remote_dir, exist_ok=True)
+            for item in local_dir.iterdir():
+                item_remote_path = remote_dir / item.name
+                if item.is_dir():
+                    upload_directory(item, item_remote_path)
+                else:
+                    self.conn.upload(item, item_remote_path)
+
+        if local_path.is_dir():
+            upload_directory(local_path, remote_path)
+        else:
+            parent = remote_path.parent
+            if str(parent) != ".":
+                self.conn.makedirs(parent, exist_ok=True)
+            self.conn.upload(local_path, remote_path)
 
     @retry_decorator
     def remove(self):
