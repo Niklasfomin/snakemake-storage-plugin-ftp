@@ -3,7 +3,7 @@ import uuid
 from snakemake_interface_storage_plugins.tests import TestStorageBase
 from snakemake_interface_storage_plugins.storage_provider import StorageProviderBase
 from snakemake_interface_storage_plugins.settings import StorageProviderSettingsBase
-from snakemake_storage_plugin_ftp import StorageProvider, StorageProviderSettings
+from snakemake_storage_plugin_ftp_leshl import StorageProvider, StorageProviderSettings
 
 
 class TestStorage(TestStorageBase):
