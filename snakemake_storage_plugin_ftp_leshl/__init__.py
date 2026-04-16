@@ -1,28 +1,27 @@
-from dataclasses import dataclass, field
 import ftplib
+from dataclasses import dataclass, field
 from pathlib import Path, PosixPath
-from typing import Iterable, Optional, List
+from typing import Iterable, List, Optional
 from urllib.parse import urlparse
 
 import ftputil
-
-from snakemake_interface_storage_plugins.settings import StorageProviderSettingsBase
-from snakemake_interface_storage_plugins.storage_provider import (  # noqa: F401
-    StorageProviderBase,
-    StorageQueryValidationResult,
-    ExampleQuery,
-    Operation,
-    QueryType,
-)
-from snakemake_interface_storage_plugins.storage_object import (
-    StorageObjectRead,
-    StorageObjectWrite,
-    StorageObjectGlob,
-    retry_decorator,
-)
 from snakemake_interface_storage_plugins.io import (
     IOCacheStorageInterface,
     get_constant_prefix,
+)
+from snakemake_interface_storage_plugins.settings import StorageProviderSettingsBase
+from snakemake_interface_storage_plugins.storage_object import (
+    StorageObjectGlob,
+    StorageObjectRead,
+    StorageObjectWrite,
+    retry_decorator,
+)
+from snakemake_interface_storage_plugins.storage_provider import (  # noqa: F401
+    ExampleQuery,
+    Operation,
+    QueryType,
+    StorageProviderBase,
+    StorageQueryValidationResult,
 )
 
 
@@ -228,7 +227,7 @@ class StorageObject(StorageObjectRead, StorageObjectWrite, StorageObjectGlob):
     def store_object(self):
         # Ensure that the object is stored at the location specified by
         # self.local_path().
-        
+
         local_path = self.local_path()
         remote_path = PosixPath(self.parsed_query.path)
 
@@ -252,6 +251,9 @@ class StorageObject(StorageObjectRead, StorageObjectWrite, StorageObjectGlob):
 
     @retry_decorator
     def remove(self):
+        # Temp patch to the storage provider
+        if "snakemake-workflow-sources." in self.parsed_query.path:
+            return
         # Remove the object from the storage.
         if self.conn.path.isdir(self.parsed_query.path):
             self.conn.rmtree(self.parsed_query.path)
