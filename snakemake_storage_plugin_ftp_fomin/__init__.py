@@ -191,10 +191,19 @@ class StorageObject(StorageObjectRead, StorageObjectWrite, StorageObjectGlob):
     # Fallible methods should implement some retry logic.
     # The easiest way to do this (but not the only one) is to use the retry_decorator
     # provided by snakemake-interface-storage-plugins.
+    # @retry_decorator
+    # def exists(self) -> bool:
+    #     # return True if the object exists
+    #     return self.conn.path.exists(self.parsed_query.path)
     @retry_decorator
     def exists(self) -> bool:
-        # return True if the object exists
-        return self.conn.path.exists(self.parsed_query.path)
+        try:
+            return self.conn.path.exists(self.parsed_query.path)
+        except Exception as e:
+            print(
+                f"FTP exists() failed for {self.parsed_query.path}: {type(e).__name__}: {e}"
+            )
+            return False
 
     @retry_decorator
     def mtime(self) -> float:

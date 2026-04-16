@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "snakemake-storage-plugin-ftp-leshl"
-version = "0.1.3"
+name = "snakemake-storage-plugin-ftp-fomin"
+version = "0.1.4"
 description = "A Snakemake plugin for handling input and output via FTP"
 authors = [
     "Christopher Tomkins-Tinch <tomkinsc@broadinstitute.org>",
     "Johannes Koester <johannes.koester@uni-due.de>",
 ]
 readme = "README.md"
-repository = "https://github.com/leshl/snakemake-storage-plugin-ftp-leshl"
+repository = "https://github.com/Niklasfomin/snakemake-storage-plugin-ftp"
 documentation = "https://snakemake.github.io/snakemake-plugin-catalog/plugins/storage/ftp.html"
 
 [tool.poetry.dependencies]
